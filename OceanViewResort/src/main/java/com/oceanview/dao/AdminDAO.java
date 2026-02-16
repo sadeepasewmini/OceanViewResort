@@ -10,24 +10,23 @@ public class AdminDAO {
     /**
      * Registers a new user with a hashed password.
      */
-    public boolean registerUser(User user) throws SQLException {
-        // Step 1: Route to the correct table based on role
-        String tableName = user.getRole().equalsIgnoreCase("ADMIN") ? "admins" : "staff";
-        String sql = "INSERT INTO " + tableName + " (username, password, role) VALUES (?, ?, ?)";
-        
-        try (Connection conn = DatabaseConfig.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            // Step 2: HASH THE PASSWORD
-            String secureHash = PasswordHasher.hashPassword(user.getPassword());
-            
-            ps.setString(1, user.getUsername());
-            ps.setString(2, secureHash); // Store the 60-character hash
-            ps.setString(3, user.getRole().toUpperCase());
-            
-            return ps.executeUpdate() > 0;
-        }
-    }
+	public boolean registerUser(User user) throws SQLException {
+	    String tableName = user.getRole().equalsIgnoreCase("ADMIN") ? "admins" : "staff";
+	    String sql = "INSERT INTO " + tableName + " (username, password, role) VALUES (?, ?, ?)";
+	    
+	    try (Connection conn = DatabaseConfig.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        
+	        // Transform 'normal' password into a secure 60-character hash
+	        String secureHash = PasswordHasher.hashPassword(user.getPassword());
+	        
+	        ps.setString(1, user.getUsername());
+	        ps.setString(2, secureHash); // Store ONLY the hash in the database
+	        ps.setString(3, user.getRole().toUpperCase());
+	        
+	        return ps.executeUpdate() > 0;
+	    }
+	}
 
     /**
      * Updates credentials, ensuring the new password is also hashed.

@@ -186,8 +186,9 @@
                 <h1 style="margin:0; font-size: 1.875rem;">Staff Dashboard</h1>
                 <p style="color: var(--text-muted);">Logged in as: <strong><%= user.getUsername() %></strong></p>
             </div>
-            <div style="text-align: right; color: var(--text-muted); font-size: 0.9rem;">
-                <%= new java.util.Date() %>
+            <div style="text-align: right;">
+                <div style="font-weight: 600;"><%= new java.util.Date().toString().substring(0, 10) %></div>
+                <div style="font-size: 0.8rem; color: var(--status-available);">● System Online</div>
             </div>
         </header>
 
