@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.oceanview.model.User, com.oceanview.model.Reservation, com.oceanview.model.Room, com.oceanview.dao.ReservationDAO, com.oceanview.dao.RoomDAO, java.util.List" %>
+<%@ page import="com.oceanview.model.User, com.oceanview.model.Reservation, com.oceanview.dao.ReservationDAO, java.util.List" %>
 <%
     // 1. Session Access Control: Ensures only logged-in users access the registry
     User user = (User) session.getAttribute("user");
@@ -8,14 +8,12 @@
         return;
     }
 
-    // 2. Specialized Data Retrieval
+    // 2. Specialized Data Retrieval: Fetch all occupancy records
     ReservationDAO resDAO = new ReservationDAO();
-    RoomDAO roomDAO = new RoomDAO();
     List<Reservation> allReservations = resDAO.selectAllReservations();
     
     // 3. Capture status messages from redirects
     String status = request.getParameter("status");
-    String error = request.getParameter("error");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +30,6 @@
             --bg-canvas: #f1f5f9;
             --white: #ffffff;
             --border: #e2e8f0;
-            --danger: #ef4444;
         }
 
         body { 
@@ -74,14 +71,9 @@
         .content-area { 
             margin-left: 280px; 
             padding: 40px; 
-            width: 100%; 
+            width: calc(100% - 280px); 
             box-sizing: border-box; 
         }
-
-        /* Notifications */
-        .alert { padding: 14px 20px; border-radius: 8px; margin-bottom: 30px; font-weight: 600; font-size: 0.9rem; }
-        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
         /* Registry Table Section */
         .table-section { 
@@ -91,16 +83,14 @@
             overflow: hidden; 
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); 
         }
-        .table-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .table-header { padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
         #searchBar { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; width: 300px; font-family: inherit; }
 
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8fafc; padding: 18px 20px; text-align: left; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
         td { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
         
-        .btn-checkout { background-color: var(--danger); color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-checkout:hover { opacity: 0.9; }
-        
+        .alert { padding: 14px 20px; border-radius: 8px; margin-bottom: 30px; font-weight: 600; font-size: 0.9rem; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .logout-link { padding: 20px 30px; color: #fca5a5; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
     </style>
 </head>
@@ -109,10 +99,10 @@
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h2 style="margin:0;">OCEAN VIEW</h2>
-            <small style="color: var(--brand-primary);">RESOURCE MANAGEMENTT</small>
+            <small style="color: var(--brand-primary);">RESOURCE MANAGEMENT</small>
         </div>
         <nav class="nav-menu">
-            <a href="staff_dashboard.jsp" class="nav-item active">Operational Overview</a>
+           <a href="staff_dashboard.jsp" class="nav-item active">Operational Overview</a>
             <a href="staff_guest.jsp" class="nav-item">Guest Registration</a> 
             <a href="add_reservation.jsp" class="nav-item">New Booking</a> 
             <a href="view_reservations.jsp" class="nav-item">Guest Registry</a>
@@ -134,18 +124,16 @@
     <main class="content-area">
         <header style="margin-bottom: 30px;">
             <h1 style="margin:0; font-size: 1.875rem;">Guest Registry</h1>
-            <p style="color: var(--text-muted);">Monitor current occupancy and process guest check-outs.</p>
+            <p style="color: var(--text-muted);">Monitor current occupancy and automated billing records.</p>
         </header>
 
-        <% if ("checkedout".equals(status)) { %>
-            <div class="alert alert-success">✓ Checkout complete. Room inventory has been updated to 'Available'.</div>
-        <% } else if ("true".equals(error)) { %>
-            <div class="alert alert-error">⚠ System Error: Could not finalize check-out. Please check database connectivity.</div>
+        <% if ("success".equals(status)) { %>
+            <div class="alert">✓ Reservation confirmed. Room status updated and billing records finalized.</div>
         <% } %>
 
         <div class="table-section">
             <div class="table-header">
-                <h3 style="margin:0; font-size: 1.1rem; color: var(--brand-dark);">Active Reservation Logs</h3>
+                <h3 style="margin:0; font-size: 1.1rem; color: var(--brand-dark);">Active Occupancy Records</h3>
                 <input type="text" id="searchBar" onkeyup="filterTable()" placeholder="Filter by guest name...">
             </div>
 
@@ -153,31 +141,38 @@
                 <thead>
                     <tr>
                         <th>Ref ID</th>
-                        <th>Guest</th>
-                        <th>Room</th>
-                        <th>Duration</th>
-                        <th style="text-align: right;">Operations</th>
+                        <th>Guest Name</th>
+                        <th>Room Assignment</th>
+                        <th>Stay Duration</th>
+                        <th style="text-align: right;">Total Bill</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% if (allReservations != null && !allReservations.isEmpty()) { 
                         for(Reservation res : allReservations) { %>
                         <tr>
-                            <td style="font-family: monospace; font-weight: 700; color: var(--brand-primary);">#<%= res.getReservationNumber() %></td>
+                            <td style="font-family: monospace; font-weight: 700; color: var(--brand-primary);">
+                                #<%= res.getReservationNumber() %>
+                            </td>
                             <td><strong><%= res.getGuestName() %></strong></td>
-                            <td>Unit <%= res.getRoomNumber() %></td>
-                            <td style="font-size: 0.85rem; color: var(--text-muted);"><%= res.getCheckInDate() %> &rarr; <%= res.getCheckOutDate() %></td>
-                            <td style="text-align: right;">
-                                <form action="CheckoutServlet" method="POST" style="margin:0;" onsubmit="return confirm('Release Room <%= res.getRoomNumber() %> and finalize guest stay?')">
-                                    <input type="hidden" name="resId" value="<%= res.getReservationNumber() %>">
-                                    <input type="hidden" name="roomNo" value="<%= res.getRoomNumber() %>">
-                                    <button type="submit" class="btn-checkout">Checkout</button>
-                                </form>
+                            <td>
+                                Unit <%= res.getRoomNumber() %><br>
+                                <small style="color: var(--text-muted);"><%= res.getRoomType() %></small>
+                            </td>
+                            <td style="font-size: 0.85rem; color: var(--text-muted);">
+                                <%= res.getCheckInDate() %> &rarr; <%= res.getCheckOutDate() %>
+                            </td>
+                            <td style="text-align: right; font-weight: 700; color: var(--brand-dark);">
+                                LKR <%= String.format("%.2f", res.getTotalBill()) %>
                             </td>
                         </tr>
                     <%  } 
                     } else { %>
-                        <tr><td colspan="5" style="text-align:center; padding: 50px; color: var(--text-muted);">No active occupancy records found.</td></tr>
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 50px; color: var(--text-muted);">
+                                No active occupancy records found.
+                            </td>
+                        </tr>
                     <% } %>
                 </tbody>
             </table>
@@ -185,11 +180,12 @@
     </main>
 
     <script>
+        // Real-time table filter
         function filterTable() {
             let input = document.getElementById("searchBar"), filter = input.value.toUpperCase();
             let tr = document.getElementById("resTable").getElementsByTagName("tr");
             for (let i = 1; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName("td")[1];
+                let td = tr[i].getElementsByTagName("td")[1]; // Search by Name column
                 if (td) tr[i].style.display = (td.textContent || td.innerText).toUpperCase().indexOf(filter) > -1 ? "" : "none";
             }
         }

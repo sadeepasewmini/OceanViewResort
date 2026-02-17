@@ -78,11 +78,21 @@
             <small style="color: var(--brand-primary);">RESOURCE MANAGEMENT</small>
         </div>
         <nav class="nav-menu">
-            <a href="staff_dashboard.jsp" class="nav-item">Operational Overview</a>
+            <a href="staff_dashboard.jsp" class="nav-item active">Operational Overview</a>
             <a href="staff_guest.jsp" class="nav-item">Guest Registration</a> 
-            <a href="add_reservation.jsp" class="nav-item active">New Booking</a> 
+            <a href="add_reservation.jsp" class="nav-item">New Booking</a> 
             <a href="view_reservations.jsp" class="nav-item">Guest Registry</a>
             <a href="view_bills.jsp" class="nav-item">Billing Center</a>
+            
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                <a href="help.jsp" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Help & Support
+                </a>
         </nav>
         <a href="LogoutServlet" class="logout-link">Sign Out</a>
     </aside>
