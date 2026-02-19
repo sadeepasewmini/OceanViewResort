@@ -13,16 +13,7 @@
 <html>
 <head>
     <title>Room Management | Ocean View Resort</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 30px; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: #2c3e50; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; }
-        .btn-delete { color: #dc3545; border: 1px solid #dc3545; padding: 5px 10px; border-radius: 4px; text-decoration: none; background: none; cursor: pointer; }
-        .btn-delete:hover { background: #dc3545; color: white; }
-        .action-form { display: inline; }
-    </style>
+   
 </head>
 <body>
     <div class="container">
