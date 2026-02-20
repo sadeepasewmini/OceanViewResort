@@ -187,23 +187,7 @@
                             <input type="hidden" name="hotelPhone" value="<%= hotelPhone %>">
                             <input type="hidden" name="hotelAddress" value="<%= hotelAddress %>">
 
-                            <td>
-                                <% if (!isPaid) { %>
-                                    <select name="payMethod" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit;" required>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Credit Card">Credit Card</option>
-                                    </select>
-                                <% } else { %>
-                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Settled</span>
-                                <% } %>
-                            </td>
-                            <td style="text-align: right;">
-                                <% if (!isPaid) { %>
-                                    <button type="submit" class="btn-pay">💳 Process</button>
-                                <% } else { %>
-                                    <div style="color: var(--success); font-weight: 700; font-size: 0.8rem;">✓ CLEARED</div>
-                                <% } %>
-                            </td>
+                          
                         </form>
                     </tr>
                     <% } } %>
