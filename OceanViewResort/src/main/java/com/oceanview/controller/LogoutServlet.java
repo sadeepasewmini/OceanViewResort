@@ -18,6 +18,6 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate(); // Destroys session data to exit the system
         }
         // Redirect back to index with a status for user feedback
-       
+        response.sendRedirect("index.jsp?status=loggedout");
     }
 }
