@@ -35,17 +35,6 @@ public class AdminDAO {
         String tableName = user.getRole().equalsIgnoreCase("ADMIN") ? "admins" : "staff";
         String sql = "UPDATE " + tableName + " SET password = ?, role = ? WHERE username = ?";
         
-        try (Connection conn = DatabaseConfig.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            // Step 2: HASH THE NEW PASSWORD
-            String secureHash = PasswordHasher.hashPassword(user.getPassword());
-            
-            ps.setString(1, secureHash); 
-            ps.setString(2, user.getRole().toUpperCase());
-            ps.setString(3, user.getUsername());
-            
-            return ps.executeUpdate() > 0;
-        }
+       
     }
 }
